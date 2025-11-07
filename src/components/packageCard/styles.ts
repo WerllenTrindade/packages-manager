@@ -4,7 +4,9 @@ export const s = StyleSheet.create({
   card: {
     backgroundColor: "#fff",
     borderRadius: 16,
-    padding: 16,
+    paddingVertical: 16,
+    paddingRight: 16,
+    paddingLeft: 8,
     marginBottom: 12,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
@@ -27,7 +29,6 @@ export const s = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     color: "#111827",
-    marginBottom: 4,
   },
   clientName: {
     fontSize: 16,
@@ -43,6 +44,9 @@ export const s = StyleSheet.create({
     fontSize: 12,
     fontWeight: "500",
     textTransform: "capitalize",
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 5
   },
   footer: {
     flexDirection: "row",

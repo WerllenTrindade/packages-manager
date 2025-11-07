@@ -33,6 +33,7 @@ export const s = StyleSheet.create({
   listContainer: {
     paddingHorizontal: 10,
     flex: 1,
+    paddingTop: 15,
     backgroundColor: "#F9FAFB",
   },
   emptyText: {

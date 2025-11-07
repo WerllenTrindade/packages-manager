@@ -10,7 +10,6 @@ import { useNavigation } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  FlatList,
   Pressable,
   StatusBar,
   Text,
@@ -66,6 +65,16 @@ export function Scanner() {
   }
 
   const loading = true;
+  if (!permission.granted) {
+    return (
+      <View style={styles.center}>
+        <Text style={{ marginBottom: 10 }}>Permissão da câmera é necessária.</Text>
+        <Text onPress={requestPermission} style={{ color: "#007AFF", fontWeight: "600" }}>
+          Conceder permissão
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={s.safeArea}>
@@ -101,8 +110,8 @@ export function Scanner() {
               <Button description="Escanear"/>
             </View>
 
-            <FlatList
-            />
+            {/* <FlatList
+            /> */}
             </View>
           }
           topContent={
