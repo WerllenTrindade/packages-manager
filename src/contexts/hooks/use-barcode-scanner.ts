@@ -17,7 +17,6 @@ export function useBarcodeScanner(onScan: (data: string) => void) {
       if (!scanned) {
         setScanned(true);
         onScan(data);
-        // reset scanned after intervalo para permitir nova leitura
         setTimeout(() => setScanned(false), 2000);
       }
     },

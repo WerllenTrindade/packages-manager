@@ -1,4 +1,5 @@
 import theme from "@/theme";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { NavigationContainer } from "@react-navigation/native";
 import { SQLiteProvider } from "expo-sqlite";
 import React, { Suspense } from "react";
@@ -11,12 +12,18 @@ function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <StatusBar barStyle={"dark-content"} />
-      <Suspense fallback={<ActivityIndicator size="large" color={theme.colors.primary} />}>
+      <Suspense
+        fallback={
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+        }
+      >
+        <BottomSheetModalProvider>
           <NavigationContainer>
-        <SQLiteProvider databaseName="packages.db" onInit={db}>
-            <Router />
-        </SQLiteProvider>
+            <SQLiteProvider databaseName="packages.db" onInit={db}>
+              <Router />
+            </SQLiteProvider>
           </NavigationContainer>
+        </BottomSheetModalProvider>
       </Suspense>
     </GestureHandlerRootView>
   );
