@@ -21,8 +21,8 @@ export const s = StyleSheet.create({
   titleContainer: {
     flex: 1,
     justifyContent: "flex-end",
-    marginBottom: 32,
     gap: 12,
+    
   },
   titleText: {
     fontFamily: theme.fonts.interBold_700,
@@ -30,6 +30,7 @@ export const s = StyleSheet.create({
     lineHeight: 32,
     color: theme.colors.white,
     textAlign: "center",
+    marginTop: 25
   },
   subtitleText: {
     fontFamily: theme.fonts.interBold_700,
