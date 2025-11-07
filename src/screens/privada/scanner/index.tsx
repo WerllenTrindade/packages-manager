@@ -1,14 +1,13 @@
 import { Button } from "@/components/Button";
 import { useSessionPackagesStore } from "@/contexts/hooks/use-package-session";
+import { usePackagesService } from "@/services/package/local/packageLocalService";
 import theme from "@/theme";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import {
   BarcodeScanningResult,
   CameraView,
   useCameraPermissions,
 } from "expo-camera";
-import { useNavigation } from "expo-router";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -18,58 +17,47 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { InfoBottomSheet } from "./components/info-bottom-sheet";
 import { Overlay } from "./components/overlay";
 import { s } from "./styles";
 
 export function Scanner() {
   const [scannerBusy, setScannerBusy] = useState(false);
-  const [scannedId, setScannedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const { width, height } = useWindowDimensions();
-  const navigation = useNavigation();
-
   const { items, addItem, clear } = useSessionPackagesStore();
-
-  const productBottomSheetRef = useRef<BottomSheetModal>(null);
-  const notFoundBottomSheetRef = useRef<BottomSheetModal>(null);
-  const successAddBottomSheetRef = useRef<BottomSheetModal>(null);
+  const { findByGtinPackage } = usePackagesService();
 
   const [permission, requestPermission] = useCameraPermissions();
+  const { width, height } = useWindowDimensions();
 
-  // ====> Função principal de leitura
   const onScanCode = useCallback(
-    async ({ data: barcode }: BarcodeScanningResult) => {
-      if (!barcode || scannerBusy) return;
+    async ({ data }: BarcodeScanningResult) => {
+      if (!data || scannerBusy) return;
       setScannerBusy(true);
       setLoading(true);
 
       try {
-        console.log("📦 Código escaneado:", barcode);
+        // 🔍 Busca no banco
+        const exists = await findByGtinPackage(data);
 
-        // Simula consulta ao SQLite
-        const existsInDb = false; // TODO: SELECT * FROM packages WHERE gtin = ?
-
-        if (existsInDb) {
-          notFoundBottomSheetRef.current?.present();
+        if (exists) {
+          console.log("📦 Produto já existe no banco:", exists);
         } else {
+          // ➕ Adiciona à lista temporária
           addItem({
-            id: barcode,
-            gtin: barcode,
+            id: data,
+            gtin: data,
             createdAt: new Date().toISOString(),
           });
-          successAddBottomSheetRef.current?.present();
         }
-      } catch (e) {
-        console.error("Erro ao escanear:", e);
-        notFoundBottomSheetRef.current?.present();
+      } catch (err) {
+        console.error("Erro ao escanear:", err);
       } finally {
         setLoading(false);
         setTimeout(() => setScannerBusy(false), 1000);
       }
     },
-    [addItem, scannerBusy]
+    [scannerBusy, addItem, findByGtinPackage]
   );
 
   const onScanBarcodeHandler = useCallback(() => {
@@ -159,17 +147,6 @@ export function Scanner() {
           }
         />
       </CameraView>
-
-      <InfoBottomSheet
-        ref={successAddBottomSheetRef}
-        title="Produto adicionado com sucesso!"
-        subtitle="Seu produto foi adicionado à lista temporária."
-        onClose={() => {
-          setScannerBusy(false);
-          setScannedId(null);
-          successAddBottomSheetRef.current?.close();
-        }}
-      />
     </SafeAreaView>
   );
 }

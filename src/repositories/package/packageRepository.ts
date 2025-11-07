@@ -10,5 +10,16 @@ export function usePackageDatabase() {
     return await db.getAllAsync<PackageTypes>(query);
   }
 
-  return { getAll };
+  async function findByGtin(gtin: string): Promise<PackageTypes | null>{
+      try {
+      const query = "SELECT * FROM packages WHERE gtin = ?";
+      const result = await db.getAllAsync<PackageTypes>(query, [gtin]);
+      return result?.[0] || null;
+    } catch (error) {
+      console.error("Erro ao buscar produto no banco:", error);
+      return null;
+    }
+  }
+
+  return { getAll, findByGtin };
 }
