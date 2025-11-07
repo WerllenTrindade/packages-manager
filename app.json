@@ -7,9 +7,13 @@
     "icon": "./assets/images/icon.png",
     "scheme": "packagesmanager",
     "userInterfaceStyle": "automatic",
+     "extra": {
+      "WEBHOOK_URL": "https://webhook.site/6e5a2f84-6c55-4544-b2ba-11eacd1fc69a"
+    },
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.werllen.packages-manager"
     },
     "android": {
       "adaptiveIcon": {
@@ -36,6 +40,20 @@
           "backgroundColor": "#ffffff",
           "dark": {
             "backgroundColor": "#000000"
+          }
+        }
+      ],
+      [
+        "expo-sqlite",
+        {
+          "enableFTS": true,
+          "useSQLCipher": true,
+          "android": {
+            "enableFTS": false,
+            "useSQLCipher": false
+          },
+          "ios": {
+            "customBuildFlags": ["-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"]
           }
         }
       ]

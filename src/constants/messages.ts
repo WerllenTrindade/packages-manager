@@ -1,0 +1,1 @@
+export const NO_INTERNET_MESSAGE = "Parece que você está sem internet. Conecte-se e tente novamente.";
