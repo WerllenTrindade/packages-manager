@@ -5,4 +5,5 @@ export interface IPackageService {
   upgradeStatusPackage(): Promise<PackageTypes>;
   getIdPackage(): Promise<PackageTypes>;
   findByGtin(gtin: string): Promise<PackageTypes | null>;
+  insertPackage(item: PackageTypes): Promise<PackageTypes | null>;
 }

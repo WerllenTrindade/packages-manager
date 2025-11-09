@@ -38,7 +38,7 @@ export async function db(database: SQLiteDatabase) {
       { code: "PKG002", status: "Coletado", delivery_status: "pending", client_name: "Maria Souza", scanned_at: now },
       { code: "PKG003", status: "Em rota de entrega", delivery_status: "sent", client_name: "Carlos Lima", scanned_at: now },
       { code: "PKG004", status: "Em rota de entrega", delivery_status: "pending", client_name: "Ana Paula", scanned_at: now },
-      { code: "PKG005", status: "Entregue", delivery_status: "sent", client_name: "Pedro Santos", scanned_at: now },
+      { code: "PKG005", status: "Entregue", delivery_status: "sent", client_name: "Pedro Sapackages.scanned_attos", scanned_at: now },
       { code: "PKG006", status: "Entregue", delivery_status: "pending", client_name: "Fernanda Costa", scanned_at: now },
     ];
 

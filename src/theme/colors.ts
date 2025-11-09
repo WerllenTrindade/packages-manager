@@ -1,18 +1,38 @@
 export const colors = {
   primary: '#103554',
   secondary: '#2AD3C7',
-  backgroundPrimary: '#F5F7FA',
-  backgroundSecondary: '#E0F2F7', 
-  cardBackground: '#FFFFFF',
-  headerBackground: '#103554',
-  textPrimary: '#111827',
-  textSecondary: '#6B7280',
-  buttonPrimary: '#2AD3C7', 
-  buttonAccent: '#F59E0B',
-  borderGray: '#CBD5E1',  
-  white: '#FFF', 
-  searchBorder: '#CBD5E1',  
-  success: '#76C636',
+  
+  white: '#fff',
+
+  background: {
+    primary: '#F5F7FA',
+    secondary: '#E0F2F7',
+    card: '#FFFFFF',
+    header: '#103554',
+  },
+
+  text: {
+    primary: '#111827',
+    secondary: '#6B7280',
+    white: '#FFF',
+  },
+
+  button: {
+    primary: '#2AD3C7',
+    accent: '#F59E0B',
+  },
+  
+  status: {
+    success: '#76C636',
+    warning: '#F59E0B',
+    danger: '#E61010',
+    info: '#103554',
+  },
+
+  border: {
+    default: '#CBD5E1',
+    search: '#CBD5E1',
+  },
 
   gray: {
     50: '#F2F2F2',

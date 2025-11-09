@@ -1,11 +1,11 @@
-
-
+export type PackageStatus = 'Coletado' | 'Em rota de entrega' | 'Entregue';
+export type DeliveryStatus = 'pending' | 'sent';
 
 export interface PackageTypes {
   id: number;
   code: string;
-  status: 'Coletado' | 'Em rota de entrega' | 'Entregue';
-  delivery_status: 'pending' | 'sent';
+  status: PackageStatus;
+  delivery_status: DeliveryStatus;
   client_name?: string | null;
   scanned_at: string;
   sent_at?: string | null;
