@@ -18,6 +18,7 @@ export type PublicStackParamList = {
 
 export type PrivateStackParamList = {
   [ROUTES_PRIVATE.HOME]: undefined;
+  [ROUTES_PRIVATE.SCANNER]: undefined;
 };
 
 export type PublicNavigation = NativeStackNavigationProp<PublicStackParamList>;

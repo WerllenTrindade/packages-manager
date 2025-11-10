@@ -1,59 +1,79 @@
-import { BottomSheetFooter, BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
-import React, { forwardRef, ReactNode, useImperativeHandle, useRef, useState } from "react";
-import {
-  Pressable,
-  Text,
-  View
-} from "react-native";
-import { s } from "./styles";
+import { Button } from "@/components/Button";
+import { CustomBottomSheetModal } from "@/components/CustomBottomSheetModal";
+import { InputForm } from "@/components/Inputs/InputForm";
 import { InputSelect } from "@/components/Inputs/InputSelect";
+import { listStatus } from "@/constants/status";
+import theme from "@/theme";
+import { TouchableWithoutFeedback } from "@gorhom/bottom-sheet";
+import React, { forwardRef, useEffect } from "react";
+import { Keyboard, Text, View } from "react-native";
+import { s } from "./styles";
+import { packageStatusTypes } from "./types";
+import { usePackageStatusChange } from "./usePackageStatusChange";
 
-export interface RecoverBottomSheetProps {
-  open: (email: string) => void;
+export interface PackageStatusChangeRef {
+  open: (onSubmit: (data: packageStatusTypes) => Promise<boolean>) => void;
   close: () => void;
 }
 
-export const PackageStatusChange = forwardRef<RecoverBottomSheetProps>((_, ref) => {
+export const PackageStatusChange = forwardRef<PackageStatusChangeRef>((_, ref) => {
+  const { bottomSheetRef, handleConfirm, control, status, selectStatus, errors, isLoading} = usePackageStatusChange({ ref });
 
-     const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const [email, setEmail] = useState("");
+  useEffect(() => {
+    const keyboardDidHideListener = Keyboard.addListener("keyboardDidHide", () => {
+      bottomSheetRef.current?.snapToIndex(0);
+    });
 
-  useImperativeHandle(ref, () => ({
-    open: (email: string) => {
-      setEmail(email);
-      bottomSheetRef.current?.present();
-    },
-    close: () => {
-      bottomSheetRef.current?.dismiss();
-    },
-  }));
+    return () => {
+      keyboardDidHideListener?.remove();
+    };
+  }, []);
 
-  const navigate = () => {
-    bottomSheetRef.current?.dismiss();
-  };
+  return (
+    <CustomBottomSheetModal ref={bottomSheetRef}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={s.container}>
+          <View style={{ marginBottom: 25, gap: 10 }}>
+            <InputSelect
+              control={control}
+              name="status"
+              title="Status"
+              arrItems={listStatus}
+              selectItem={selectStatus}
+            />
 
-    return (
-      <BottomSheetModal
-        ref={bottomSheetRef}
-        enableDynamicSizing={false}
-        snapPoints={[240]}
-        footerComponent={(props) => (
-          <BottomSheetFooter {...props}>
-            <View style={s.footerContainer}>
-              <Pressable style={s.okButton} onPress={() => null}>
-                <Text style={s.okButtonText}>OK</Text>
-              </Pressable>
-            </View>
-          </BottomSheetFooter>
-        )}
-      >
-        <BottomSheetView style={s.container}>
-            <InputSelect arrItems={[1,2]} control={} name="" selectItem={() => null} title="Status" />
-        </BottomSheetView>
-      </BottomSheetModal>
-    );
-  }
-);
+            {status === "Entregue" && (
+              <InputForm
+                acitveBottomSheet={true}
+                control={control}
+                name="clientName"
+                title="Nome do Recebedor"
+                placeholder="Digite o nome do recebedor"
+              />
+            )}
 
+            {errors.status && <Text style={{ color: "red", marginTop: 4 }}>{errors.status.message}</Text>}
+          </View>
+
+          <View style={s.footerContainer}>
+            <Button
+              disabled={isLoading}
+              style={{ backgroundColor: isLoading ? theme.colors.gray[100] : theme.colors.gray[500], borderColor: isLoading ? theme.colors.gray[100] : theme.colors.gray[500] }}
+              description="Cancelar"
+              onPress={() => bottomSheetRef.current?.dismiss()}
+            />
+            <Button
+              disabled={isLoading}
+              isLoading={isLoading}
+              style={{ flex: 1, backgroundColor: theme.colors.button.primary, borderColor: theme.colors.button.primary }}
+              description="Confirmar"
+              onPress={handleConfirm}
+            />
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
+    </CustomBottomSheetModal>
+  );
+});
 
 PackageStatusChange.displayName = "PackageStatusChange";

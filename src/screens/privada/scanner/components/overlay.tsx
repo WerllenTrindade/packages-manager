@@ -71,8 +71,6 @@ export function Overlay() {
     V${borderY + borderHeight - cornerLength}
   `;
 
-  const topAreaHeight = holeY + (borderY - holeY) + borderPadding;
-
   return (
     <Svg width={width} height={height} viewBox={`1 1 ${width} ${height}`}>
  

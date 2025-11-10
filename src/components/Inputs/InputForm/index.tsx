@@ -1,6 +1,7 @@
 import theme from "@/theme";
 import { MasksTypes } from "@/utils/masks";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import React, { useState } from "react";
 import { Control, Controller } from "react-hook-form";
 import {
@@ -21,9 +22,10 @@ interface InputProps extends TextInputProps {
   clearable?: boolean
   secureTextEntry?: boolean;
   require?: boolean;
+  acitveBottomSheet?: boolean
 }
 
-export function InputForm({ name, control, mask, require = false, title, style, clearable = false, secureTextEntry = false, ...rest }: InputProps) {
+export function InputForm({ name, control, mask, require = false, acitveBottomSheet = false, title, style, clearable = false, secureTextEntry = false, ...rest }: InputProps) {
   const [eye, setEye] = useState(secureTextEntry)
   return (
     <View style={{  position: "relative" }}>
@@ -34,7 +36,24 @@ export function InputForm({ name, control, mask, require = false, title, style, 
           <View>
             <Text numberOfLines={1} style={s.title}>{title}{require && '*'}</Text>
             <View>
-              <InputMask
+              {
+                acitveBottomSheet ?
+                <BottomSheetTextInput
+              placeholderTextColor={theme.colors.gray[300]}
+                style={[
+                  s.input,
+                  style,
+                  error && { borderColor: theme.colors.red[500], color: theme.colors.red[500] },
+                ]}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                secureTextEntry={eye}
+                {...rest}
+              />
+
+                :
+                 <InputMask
                 placeholderTextColor={theme.colors.gray[300]}
                 style={[
                   s.input,
@@ -48,6 +67,9 @@ export function InputForm({ name, control, mask, require = false, title, style, 
                 secureTextEntry={eye}
                 {...rest}
               />
+              }
+              
+             
               <View style={s.actionContainer}>
                 {clearable && !!value ?
                   <TouchableOpacity

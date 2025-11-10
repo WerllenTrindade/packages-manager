@@ -1,27 +1,125 @@
-
+import { useSessionPackagesStore } from "@/contexts/hooks/use-package-session";
 import { usePackageDatabase } from "@/repositories/package/packageRepository";
-import { PackageTypes } from "@/types/package";
-
+import { packageStatusTypes } from "@/screens/privada/scanner/components/package-status-change/types";
+import Toast from "react-native-toast-message";
+import { createFromScan } from "../factory";
+import { mapPackagesForStatusUpdate, mapPackagesWithDeliveryStatus } from "./helpers";
 
 export function usePackagesService() {
-  const { getAll, findByGtin, updatePackageStatus, insertPackage } = usePackageDatabase();
+  const { items, setItems, addItem } = useSessionPackagesStore();
+  const {
+    getAll,
+    findByGtin,
+    updatePackagesStatusAsync,
+    insertPackage,
+    updatePackageStatus,
+    syncPackages,
+  } = usePackageDatabase();
 
-  const getAllPackage = async () => {
-    return await getAll();
+  async function getAllPackage() {
+    return getAll();
+  }
+
+  async function findByGtinPackage(code: string) {
+    try {
+      const data = await findByGtin(code);
+      return { success: !!data, data };
+    } catch (err) {
+      return { success: false, message: "Falha ao buscar pacote." };
+    }
+  }
+
+  async function updatePackageStatusPackage(code: string, newState: string) {
+    try {
+      const data = await updatePackageStatus(code, newState);
+      if (!data)
+        return { success: false, message: "Pacote não encontrado no banco." };
+
+      addItem(data);
+
+      Toast.show({
+        type: "success",
+        text1: `Pacote ${code} marcado como ${newState}.`,
+      });
+
+      return { success: true, data };
+    } catch (err) {
+      console.error("Erro ao atualizar status:", err);
+      Toast.show({
+        type: "error",
+        text1: "Erro ao atualizar pacote.",
+      });
+      return { success: false };
+    }
+  }
+
+  async function createPackage(code: string) {
+    try {
+      const data = createFromScan(code);
+      const id = await insertPackage(data);
+
+      if (!id)
+        return { success: false, message: "Erro ao inserir pacote no banco." };
+
+      addItem({ ...data, id });
+
+      Toast.show({
+        type: "success",
+        text1: `Pacote ${code} adicionado à lista.`,
+      });
+
+      return { success: true, data: { ...data, id } };
+    } catch (err) {
+      console.error("Erro ao criar pacote:", err);
+      Toast.show({
+        type: "error",
+        text1: "Erro ao criar pacote.",
+      });
+      return { success: false };
+    }
+  }
+
+  async function updatePackageStatusLocally(data: packageStatusTypes) {
+    if (!items.length)
+      return { success: false, message: "Nenhum pacote disponível." };
+
+    try {
+      const updatedPackages = mapPackagesForStatusUpdate(items, data);
+
+      const localSuccess = await updatePackagesStatusAsync(updatedPackages);
+
+      const syncResults = await syncPackages(updatedPackages);
+
+      const overallSuccess = localSuccess && syncResults;
+
+      if (overallSuccess) {
+        const packagesWithSent = mapPackagesWithDeliveryStatus(updatedPackages, syncResults);
+
+        console.log('packagesWithSent', JSON.stringify(packagesWithSent))
+        setItems(packagesWithSent);
+        Toast.show({
+          type: "success",
+          text1: "Pacotes atualizados!",
+        });
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Falha ao atualizar pacotes.",
+        });
+      }
+
+      return { success: overallSuccess };
+    } catch (err) {
+      console.error("Erro ao atualizar localmente:", err);
+      return { success: false };
+    }
+  }
+
+  return {
+    getAllPackage,
+    findByGtinPackage,
+    updatePackageStatusPackage,
+    createPackage,
+    updatePackageStatusLocally,
   };
-
-  const findByGtinPackage =  async (code: string) => {
-      return await findByGtin(code)
-  }
-
-  const updatePackageStatusPackage = async(code: string, newState: string) => {
-    return await updatePackageStatus(code, newState)
-  }
-
-  const createPackage = async(pack: Omit<PackageTypes, 'id'>) => {
-    return await insertPackage(pack)
-  }
-  
-
-  return { getAllPackage, findByGtinPackage, updatePackageStatusPackage, createPackage };
 }

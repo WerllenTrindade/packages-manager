@@ -15,38 +15,43 @@ export const s = StyleSheet.create({
     elevation: 1,
     borderWidth: 1,
     borderColor: "#F3F4F6",
+    flexDirection: "row",
+    overflow: "hidden",
+  },
+  gradient: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 12,
+    borderTopLeftRadius: 16,
+    borderBottomLeftRadius: 16,
+  },
+  content: {
+    flex: 1,
+    paddingLeft: 12,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 12,
-  },
-  headerLeft: {
-    flexShrink: 1,
+    alignItems: "center",
+    marginBottom: 8,
   },
   code: {
     fontSize: 18,
     fontWeight: "700",
     color: "#111827",
   },
+  clientRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+  },
   clientName: {
     fontSize: 16,
     fontWeight: "500",
     color: "#374151",
-  },
-  statusContainer: {
-    borderRadius: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: "500",
-    textTransform: "capitalize",
-    paddingHorizontal: 4,
-    paddingVertical: 2,
-    borderRadius: 5
   },
   footer: {
     flexDirection: "row",

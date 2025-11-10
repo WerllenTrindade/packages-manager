@@ -30,7 +30,7 @@ export const s = StyleSheet.create({
     height: 60,
     borderWidth: 1,
     backgroundColor: theme.colors.white,
-    borderColor: theme.colors.borderGray,
+    borderColor: theme.colors.border.default,
     color: theme.colors.gray[900],
     borderRadius: 14,
     paddingLeft: 18,

@@ -1,5 +1,3 @@
-
-import theme from "@/theme";
 import { AntDesign } from "@expo/vector-icons";
 import React from "react";
 import {
@@ -12,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Contain, Container, Title } from "./styles";
+import { s } from "./styles";
 
 interface DataProps {
   closeModal: () => void;
@@ -30,77 +28,38 @@ export function ListSelectModal({
   return (
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <Modal animationType="slide" transparent statusBarTranslucent>
-        <Pressable style={{ flex: 1 }} onPress={closeModal}>
-          <Container>
-            <Contain>
-              {/* Traço superior simulando BottomSheet */}
-              <View style={{ alignItems: "center", paddingVertical: 10 }}>
-                <View
-                  style={{
-                    width: 80,
-                    // height: 4,
-                    borderRadius: 10,
-                    backgroundColor: "#6D737F",
-                  }}
-                />
-              </View>
+        <Pressable style={s.overlay} onPress={closeModal}>
+          <View style={s.modalContainer}>
+            <View style={s.handleContainer}>
+              <View style={s.handle} />
+            </View>
 
-              {/* Título */}
-              <Title>{title}</Title>
+            <Text style={s.title}>{title}</Text>
 
-              {/* Lista */}
-              <FlatList
-                showsVerticalScrollIndicator={false}
-                data={arrItems}
-                keyExtractor={(_, index) => index.toString()}
-                renderItem={({ item, index }) => (
-                  <>
-                    <TouchableOpacity
-                      onPress={() => selectItem(item)}
-                      style={{
-                        paddingVertical: 15,
-                      }}
-                    >
-                      <Text style={{
-                        fontFamily: theme.fonts.interMedium_500,
-                        fontSize: 14,
-                        fontWeight: 400,
-                        lineHeight: 40,
-                      }}>{item?.label}</Text>
-                    </TouchableOpacity>
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              data={arrItems}
+              keyExtractor={(_, index) => index.toString()}
+              renderItem={({ item, index }) => (
+                <>
+                  <TouchableOpacity onPress={() => selectItem(item)} style={s.optionButton}>
+                    <Text style={s.optionText}>{item?.label}</Text>
+                  </TouchableOpacity>
 
-                    {/* Adiciona a linha separadora entre itens, exceto o último */}
-                    {index < arrItems.length - 1 && (
-                      <View
-                        style={{
-                          height: 1,
-                          backgroundColor: "#E0E0E0",
-                        }}
-                      />
-                    )}
-                  </>
-                )}
-                ListEmptyComponent={
-                  <View style={{ alignItems: "center", marginVertical: 20 }}>
-                    <AntDesign name="exclamation-circle" size={24} color="gray" />
-                    <Text
-                      style={{
-                        marginTop: 10,
-                        fontSize: 16,
-                        color: "gray",
-                        textAlign: "center",
-                      }}
-                    >
-                      Nenhuma opção disponível no momento.
-                    </Text>
-                  </View>
-                }
-                contentContainerStyle={{
-                  paddingBottom: 15,
-                }}
-              />
-            </Contain>
-          </Container>
+                  {index < arrItems.length - 1 && <View style={s.separator} />}
+                </>
+              )}
+              ListEmptyComponent={
+                <View style={s.emptyContainer}>
+                  <AntDesign name="exclamation-circle" size={24} color="gray" />
+                  <Text style={s.emptyText}>
+                    Nenhuma opção disponível no momento.
+                  </Text>
+                </View>
+              }
+              contentContainerStyle={s.listContent}
+            />
+          </View>
         </Pressable>
       </Modal>
     </KeyboardAvoidingView>

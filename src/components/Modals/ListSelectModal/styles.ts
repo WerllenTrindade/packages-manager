@@ -1,33 +1,62 @@
-import { fonts } from "@/themes/fonts";
-import { fontDimensions } from '@/utils';
-import styled from "styled-components/native";
+import theme from "@/theme";
+import { StyleSheet } from "react-native";
 
-export const Container = styled.View`
-  flex: 1;
-  justify-content: flex-end;
-  width: 100%;
-  background-color: rgba(0,0,0,0.6);
-  z-index: 2px;
-`;
-
-export const Contain = styled.View`
-  width: 100%;
-  background-color: #f0f2f5;
-  padding: 0 20px;
-  max-height: 90%;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-`;
-
-export const Line = styled.View`
-height: 1px; 
-background-color: #706f7021;
-`
-
-export const Title = styled.Text`
-    font-family: ${fonts.robotoBold};
-    font-size: ${fontDimensions(18)}px;
-    color: #330266;
-    padding: 25px 0 15px;
-    font-weight: 600;
-`
+export const s = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    zIndex: 2,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    width: "100%",
+    justifyContent: "flex-end",
+  },
+  modalContainer: {
+    width: "100%",
+    backgroundColor: "#F0F2F5",
+    paddingHorizontal: 20,
+    maxHeight: "90%",
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  handleContainer: {
+    alignItems: "center",
+    paddingVertical: 10,
+  },
+  handle: {
+    width: 80,
+    borderRadius: 10,
+    backgroundColor: "#6D737F",
+    height: 4,
+  },
+  title: {
+    fontFamily: theme.fonts.interSemiBold_600,
+    fontSize: 18,
+    color: theme.colors.primary,
+    paddingBottom: 10,
+  },
+  optionButton: {
+    paddingVertical: 15,
+  },
+  optionText: {
+    fontFamily: theme.fonts.interRegular_400,
+    color: theme.colors.text.primary,
+    fontSize: 16,
+    lineHeight: 40,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: "#E0E0E0",
+  },
+  emptyContainer: {
+    alignItems: "center",
+    marginVertical: 20,
+  },
+  emptyText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "gray",
+    textAlign: "center",
+  },
+  listContent: {
+    paddingBottom: 20,
+  },
+});

@@ -55,9 +55,9 @@ export function InputSelect({
                 {value || "Selecionar"}
               </Text>
               <View style={{ flexDirection: 'row', gap: 10 }}>
-                <View style={{ borderWidth: 0.5, backgroundColor: theme.colors.primary, borderColor: theme.colors.primary }} />
+                <View style={{ borderWidth: 0.5, backgroundColor: theme.colors.border.default, borderColor: theme.colors.border.default }} />
 
-                <Octicons name="triangle-down" size={24} color="#747474" />
+                <Octicons name="triangle-down" size={30} color="#747474" />
               </View>
             </View>
             {error && <Text style={styles.error}>{error.message}</Text>}
@@ -89,10 +89,11 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   inputContainer: {
-    height: 50,
+    height: 60,
     borderWidth: 1,
-    borderColor: "#D8D8D8",
-    borderRadius: 5,
+    backgroundColor: theme.colors.white,
+    borderColor: theme.colors.border.default,
+    borderRadius: 14,
     paddingLeft: 15,
     paddingRight: 15,
     flexDirection: "row",
@@ -100,8 +101,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   inputText: {
-    fontSize: 14,
-    color: "#363636",
+    
+    fontSize: 16,
+    color: theme.colors.gray[900],
   },
   error: {
     marginTop: 6,
