@@ -6,14 +6,12 @@ export function usePackageDatabase() {
   const db = useSQLiteContext();
 
   async function getAll(): Promise<PackageTypes[]> {
-    const query = 
-    `SELECT * FROM packages
-      ORDER BY created_at DESC`;
+    const query = `SELECT * FROM packages ORDER BY created_at DESC`;
     return await db.getAllAsync<PackageTypes>(query);
   }
 
-  async function findByGtin(gtin: string): Promise<PackageTypes | null>{
-      try {
+  async function findByGtin(gtin: string): Promise<PackageTypes | null> {
+    try {
       const query = "SELECT * FROM packages WHERE code = ?";
       const result = await db.getAllAsync<PackageTypes>(query, [gtin]);
       return result?.[0] || null;
@@ -23,43 +21,33 @@ export function usePackageDatabase() {
     }
   }
 
-  async function updatePackageStatus(code: string, newStatus: string): Promise<PackageTypes | null>{
-     try {
-      await db.runAsync("UPDATE packages SET status = ? WHERE code = ?", [
-        newStatus,
-        code,
-      ]);
-
+  async function updatePackageStatus(code: string, newStatus: string): Promise<PackageTypes | null> {
+    try {
+      await db.runAsync("UPDATE packages SET status = ? WHERE code = ?", [newStatus, code]);
       const updated = await db.getFirstAsync<PackageTypes>(
         "SELECT * FROM packages WHERE code = ?",
         [code]
       );
-
       return updated ?? null;
     } catch (error) {
-      console.error("Erro ao buscar produto no banco:", error);
+      console.error("Erro ao atualizar produto no banco:", error);
       return null;
     }
   }
 
-  async function insertPackage(pack: Omit<PackageTypes, 'id'>) {
-    const { code, status, created_at, scanned_at } = pack
-    let statement;
-    
-      try {
-      statement = await db.prepareAsync(
-        `
-        INSERT INTO packages (code, status, created_at, scanned_at)
-        VALUES ($code, $status, $created_at, $scanned_at)
+  async function insertPackage(pack: Omit<PackageTypes, "id">) {
+    const { code, status, created_at, scanned_at } = pack;
+    try {
+      const statement = await db.prepareAsync(`
+        INSERT INTO packages (code, status, created_at, scanned_at, delivery_status)
+        VALUES ($code, $status, $created_at, $scanned_at, 'pending')
       `);
-
       const result = await statement.executeAsync({
         $code: code,
         $status: status,
         $created_at: created_at,
-        $scanned_at: scanned_at
+        $scanned_at: scanned_at,
       });
-
       return result?.lastInsertRowId ?? null;
     } catch (error) {
       console.error("❌ Erro ao inserir pacote:", error);
@@ -75,13 +63,12 @@ export function usePackageDatabase() {
         for (const item of items) {
           await db.runAsync(
             `UPDATE packages
-            SET status = ?, client_name = ?, updated_at = datetime('now')
-            WHERE id = ?`,
-            [item.status, item.client_name ?? null, item.id]
+             SET status = ?, client_name = ?, updated_at = datetime('now'), delivery_status = ?
+             WHERE id = ?`,
+            [item.status, item.client_name ?? null, item.delivery_status, item.id]
           );
         }
       });
-
       return true;
     } catch (error) {
       console.error("Erro ao atualizar pacotes localmente:", error);
@@ -103,7 +90,6 @@ export function usePackageDatabase() {
           );
         }
       });
-
       return true;
     } catch (error) {
       console.error("Erro ao atualizar múltiplos pacotes:", error);
@@ -122,74 +108,53 @@ export function usePackageDatabase() {
     }
   }
 
-  async function addToSyncQueue(packageId: number) {
-    try {
-      const existing = await db.getFirstAsync<{ id: number }>(
-        "SELECT id FROM sync_queue WHERE package_id = ?",
-        [packageId]
-      );
+  async function syncPackages(packages: PackageTypes[]): Promise<SyncResult[]> {
+    const results: SyncResult[] = [];
 
-      if (existing) {
-        await db.runAsync(
-          `UPDATE sync_queue SET retries = retries + 1, last_attempt_at = datetime('now') WHERE id = ?`,
-          [existing.id]
-        );
-      } else {
-        await db.runAsync(
-          `INSERT INTO sync_queue (package_id, retries, last_attempt_at) VALUES (?, 1, datetime('now'))`,
-          [packageId]
-        );
-      }
-    } catch (error) {
-      console.error("Erro ao adicionar pacote na sync_queue:", error);
-    }
-  }
-
-  /**
-   * Tenta enviar pacotes para o webhook e atualiza status ou fila de retry
-   */
- async function syncPackages(packages: PackageTypes[]): Promise<SyncResult[]> {
-  const results: SyncResult[] = [];
-
-  for (const pkg of packages) {
-    try {
-      const sent = await sendPackageToWebhook(pkg);
-
-      if (sent) {
-        await updateDeliveryStatus(pkg.id!, "sent");
-      } else {
-        await addToSyncQueue(pkg.id!);
+    for (const pkg of packages) {
+      if (pkg.delivery_status === "sent") {
+        console.log(`Pacote ${pkg.code} já foi processado, ignorando...`);
+        results.push({ packageId: pkg.id!, sent: true });
+        continue;
       }
 
-      results.push({ packageId: pkg.id!, sent });
-    } catch (error) {
-      console.error(`Erro ao sincronizar pacote ${pkg.code}:`, error);
-      await addToSyncQueue(pkg.id!);
-      results.push({ packageId: pkg.id!, sent: false });
+      try {
+        const sent = await sendPackageToWebhook(pkg);
+        if (sent) await updateDeliveryStatus(pkg.id!, "sent");
+
+        results.push({ packageId: pkg.id!, sent });
+      } catch (error) {
+        console.error(`Erro ao sincronizar pacote ${pkg.code}:`, error);
+        results.push({ packageId: pkg.id!, sent: false });
+      }
     }
+
+    return results;
   }
 
-  return results;
-}
+  const syncSinglePackage = async (pkg: PackageTypes): Promise<boolean> => {
+    const sent = await sendPackageToWebhook(pkg);
+    if (sent) await updateDeliveryStatus(pkg.id!, "sent");
+    return sent;
+  };
 
-  /**Processa pacotes pendentes na sync_queue */
-  async function processSyncQueue() {
-    const pendingPackages = await db.getAllAsync<PackageTypes & { queueId: number }>(
-      `SELECT p.*, q.id as queueId
-       FROM packages p
-       JOIN sync_queue q ON p.id = q.package_id`
+  async function processPendingPackages() {
+    const pending = await db.getAllAsync<PackageTypes>(
+      "SELECT * FROM packages WHERE delivery_status = 'pending'"
     );
-
-    for (const pkg of pendingPackages) {
-      const sent = await sendPackageToWebhook(pkg);
-      if (sent) {
-        await updateDeliveryStatus(pkg.id!, "sent");
-        await db.runAsync("DELETE FROM sync_queue WHERE id = ?", [pkg.queueId]);
-      } else {
-        await addToSyncQueue(pkg.id!);
-      }
-    }
+    await syncPackages(pending);
   }
 
-  return { getAll, findByGtin, updatePackageStatus, updateMultipleDeliveryStatus, syncPackages, processSyncQueue, insertPackage, updatePackagesStatusAsync };
+  return {
+    getAll,
+    findByGtin,
+    updatePackageStatus,
+    insertPackage,
+    updatePackagesStatusAsync,
+    updateMultipleDeliveryStatus,
+    updateDeliveryStatus,
+    syncPackages,
+    syncSinglePackage,
+    processPendingPackages,
+  };
 }

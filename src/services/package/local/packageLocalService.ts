@@ -1,6 +1,7 @@
 import { useSessionPackagesStore } from "@/contexts/hooks/use-package-session";
 import { usePackageDatabase } from "@/repositories/package/packageRepository";
 import { packageStatusTypes } from "@/screens/privada/scanner/components/package-status-change/types";
+import { PackageTypes } from "@/types/package";
 import Toast from "react-native-toast-message";
 import { createFromScan } from "../factory";
 import { mapPackagesForStatusUpdate, mapPackagesWithDeliveryStatus } from "./helpers";
@@ -14,6 +15,7 @@ export function usePackagesService() {
     insertPackage,
     updatePackageStatus,
     syncPackages,
+    syncSinglePackage
   } = usePackageDatabase();
 
   async function getAllPackage() {
@@ -115,11 +117,75 @@ export function usePackagesService() {
     }
   }
 
+  async function updatePackageDetailsStatus(data: packageStatusTypes, pack: PackageTypes[]){
+
+    try {
+
+      const updatedPackages = mapPackagesForStatusUpdate(pack, data);
+
+      const localSuccess = await updatePackagesStatusAsync(updatedPackages);
+
+
+      if (localSuccess) {
+
+        Toast.show({
+          type: "success",
+          text1: "Pacotes atualizados!",
+        });
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Falha ao atualizar pacotes.",
+        });
+      }
+
+      return { success: localSuccess };
+    } catch (err) {
+      console.error("Erro ao atualizar localmente:", err);
+      return { success: false };
+    }
+  }
+
+  async function updatePackageDetailsDelivery(pack: PackageTypes){
+    if (!items.length)
+      return { success: false, message: "Nenhum pacote disponível." };
+
+    try {
+
+      const item = {...pack, delivery_status: 'sent'} as PackageTypes
+
+      const localSuccess = await updatePackagesStatusAsync([item]);
+      const syncResults = await syncSinglePackage(pack);
+      const overallSuccess = localSuccess && syncResults;
+
+      if (overallSuccess) {
+        Toast.show({
+          type: "success",
+          position: 'bottom',
+          text1: "Pacotes atualizados!",
+        });
+      } else {
+        Toast.show({
+          type: "error",
+          position: 'bottom',
+          text1: "Falha ao atualizar pacotes.",
+        });
+      }
+
+      return { success: overallSuccess };
+    } catch (err) {
+      console.error("Erro ao atualizar localmente:", err);
+      return { success: false };
+    }
+  }
+
   return {
     getAllPackage,
     findByGtinPackage,
+    updatePackageDetailsStatus,
     updatePackageStatusPackage,
     createPackage,
+    updatePackageDetailsDelivery,
     updatePackageStatusLocally,
   };
 }

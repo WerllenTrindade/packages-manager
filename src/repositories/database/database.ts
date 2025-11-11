@@ -15,13 +15,6 @@ export async function db(database: SQLiteDatabase) {
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
-    CREATE TABLE IF NOT EXISTS sync_queue (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      package_id INTEGER NOT NULL,
-      retries INTEGER DEFAULT 0,
-      last_attempt_at DATETIME,
-      FOREIGN KEY (package_id) REFERENCES packages(id) ON DELETE CASCADE
-    );
 
     CREATE INDEX IF NOT EXISTS idx_packages_code ON packages (code);
     CREATE INDEX IF NOT EXISTS idx_packages_status ON packages (status);

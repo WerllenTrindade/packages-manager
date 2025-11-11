@@ -1,15 +1,18 @@
 import { useDebounce } from "@/contexts/hooks/use-debounce";
+import { useSession } from "@/contexts/hooks/use-session";
 import { usePackagesService } from "@/services/package/local/packageLocalService";
 import { PackageTypes } from "@/types/package";
 import { PrivateNavigation, ROUTES_PRIVATE } from "@/utils/routers";
 import { useNavigation } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Alert } from "react-native";
 
 export function useHome() {
    const {navigate} = useNavigation<PrivateNavigation>();
   const { getAllPackage } = usePackagesService();
   const [packages, setPackages] = useState<PackageTypes[]>([]);
   const [search, setSearch] = useState("");
+  const { clearSession } = useSession();
   const [refreshing, setRefreshing] = useState(false);
 
   const debouncedSearch = useDebounce(search, 300);
@@ -42,6 +45,21 @@ export function useHome() {
 navigate(ROUTES_PRIVATE.SCANNER)
   }
 
+  const handleSignOut = () => {
+    Alert.alert('Atenção!', 'Deseja deslogar o usuario?', [
+      {
+        style: 'cancel',
+        text: 'Não'
+      },
+      {
+        style: "default",
+        onPress: clearSession,
+        text: 'Sim'
+      }
+    ])
+  }
+  
+
   return {
     packages,
     search,
@@ -50,6 +68,7 @@ navigate(ROUTES_PRIVATE.SCANNER)
     filteredPackages,
     loadPackages,
     onRefresh,
-    isOpenScan
+    isOpenScan,
+    handleSignOut
   };
 }

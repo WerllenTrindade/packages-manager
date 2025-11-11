@@ -6,6 +6,14 @@ export const s = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.primary,
   },
+  headerContain:{
+    alignItems: 'center', 
+    justifyContent: "space-between",
+    paddingHorizontal: 16, 
+    paddingTop: 15,
+    paddingBottom: 8, 
+    flexDirection: 'row'
+  },
   headerText: {
     color: theme.colors.white,
     fontSize: 22,

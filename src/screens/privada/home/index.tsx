@@ -1,17 +1,26 @@
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { useNavigation } from "@react-navigation/native";
-import React from "react";
-import { FlatList, RefreshControl, Text, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-
 import { PackageCard } from "@/components/packageCard";
 import { Search } from "@/components/Search";
+import { PackageTypes } from "@/types/package";
+import { PrivateNavigation, ROUTES_PRIVATE } from "@/utils/routers";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useNavigation } from "@react-navigation/native";
+import React, { useCallback } from "react";
+import {
+  FlatList,
+  RefreshControl,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { s } from "./styles";
 import { useHome } from "./useHome";
 
 export function Home() {
   const { top, bottom } = useSafeAreaInsets();
-  const navigation = useNavigation<any>();
+  const { navigate } = useNavigation<PrivateNavigation>();
   const {
     search,
     isOpenScan,
@@ -19,14 +28,33 @@ export function Home() {
     filteredPackages,
     refreshing,
     onRefresh,
+    handleSignOut
   } = useHome();
 
-  const renderItem = ({ item }: any) => <PackageCard item={item} />;
+  const renderItem = useCallback(
+    ({ item }: { item: PackageTypes }) => (
+      <PackageCard
+        onPress={() =>
+          navigate(ROUTES_PRIVATE.PACKAGE_DETAILS, {
+            code: item.code,
+          })
+        }
+        item={item}
+      />
+    ),
+    [navigate]
+  );
 
   return (
     <View style={[s.container, { paddingTop: top }]}>
+      <StatusBar barStyle={"light-content"} />
       <View style={{ paddingBottom: 15 }}>
-        <Text style={s.headerText}>Pacotes</Text>
+        <View style={s.headerContain}>
+          <Text style={s.headerText}>Pacotes</Text>
+        <TouchableOpacity onPress={handleSignOut} style={{alignItems: "baseline"}}>
+          <FontAwesome name="sign-out" size={28} color="white" />
+        </TouchableOpacity>
+        </View>
 
         <View style={s.searchContainer}>
           <View style={s.searchWrapper}>
@@ -37,11 +65,12 @@ export function Home() {
             />
           </View>
 
-          <TouchableOpacity
-            style={s.scanButton}
-            onPress={isOpenScan}
-          >
-            <MaterialCommunityIcons name="qrcode-scan" size={28} color="white" />
+          <TouchableOpacity style={s.scanButton} onPress={isOpenScan}>
+            <MaterialCommunityIcons
+              name="qrcode-scan"
+              size={28}
+              color="white"
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -54,7 +83,7 @@ export function Home() {
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
-          contentContainerStyle={{paddingBottom: bottom}}
+          contentContainerStyle={{ paddingBottom: bottom }}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <Text style={s.emptyText}>Nenhum pacote encontrado</Text>

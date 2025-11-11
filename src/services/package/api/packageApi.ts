@@ -6,7 +6,7 @@ export async function sendPackageToWebhook(pkg: PackageTypes): Promise<boolean> 
     code: pkg.code,
     ...(pkg.client_name && { clientName: pkg.client_name }),
     status: pkg.status,
-    deliveryStatus: pkg.delivery_status,
+    deliveryStatus: 'sent',
     scanned_at: pkg.scanned_at,
   };
 

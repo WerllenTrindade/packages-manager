@@ -7,6 +7,7 @@ export enum ROUTES_PUBLIC {
 export enum ROUTES_PRIVATE {
   HOME = "home",
   SCANNER = "scanner",
+  PACKAGE_DETAILS = "packageDetails",
 }
 
 
@@ -19,6 +20,7 @@ export type PublicStackParamList = {
 export type PrivateStackParamList = {
   [ROUTES_PRIVATE.HOME]: undefined;
   [ROUTES_PRIVATE.SCANNER]: undefined;
+  [ROUTES_PRIVATE.PACKAGE_DETAILS]: { code: string };
 };
 
 export type PublicNavigation = NativeStackNavigationProp<PublicStackParamList>;

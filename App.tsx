@@ -44,7 +44,7 @@ function App() {
           <NavigationContainer>
             <SQLiteProvider databaseName="packages.db" onInit={db}>
               <Router />
-              <Toast config={toastConfig} visibilityTime={1500} />
+              <Toast config={toastConfig} visibilityTime={1500} position="bottom"/>
             </SQLiteProvider>
           </NavigationContainer>
         </BottomSheetModalProvider>
