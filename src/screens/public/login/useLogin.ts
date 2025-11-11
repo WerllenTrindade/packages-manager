@@ -1,7 +1,7 @@
 import { useSession } from "@/contexts/hooks/use-session";
 import { PrivateNavigation, ROUTES_PRIVATE } from "@/utils/routers";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigation } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
 import { useForm } from "react-hook-form";
 import { Alert } from "react-native";
 import { loginSchema } from "./schemas";

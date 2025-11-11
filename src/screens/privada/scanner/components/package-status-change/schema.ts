@@ -1,4 +1,3 @@
-// schemas/statusModal.ts
 import { z } from "zod";
 
 export const PackageStatusEnum = z.enum([

@@ -1,9 +1,8 @@
 import { useSessionPackagesStore } from "@/contexts/hooks/use-package-session";
 import { useBarcodeScanner } from "@/contexts/hooks/useBarcodeScanner";
 import { usePackagesService } from "@/services/package/local/packageLocalService";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useCameraPermissions } from "expo-camera";
-import { useNavigation } from "expo-router";
 import { useEffect, useMemo, useRef } from "react";
 import { PackageStatusChangeRef } from "./components/package-status-change";
 import { packageStatusTypes } from "./components/package-status-change/types";

@@ -3,7 +3,7 @@ import { useSession } from "@/contexts/hooks/use-session";
 import { usePackagesService } from "@/services/package/local/packageLocalService";
 import { PackageTypes } from "@/types/package";
 import { PrivateNavigation, ROUTES_PRIVATE } from "@/utils/routers";
-import { useNavigation } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert } from "react-native";
 
