@@ -164,14 +164,6 @@ it("retorna false quando ocorre erro", async () => {
 
 ---
 
-## 📱 Download do APK
-
-Você pode baixar e testar o aplicativo pelo link abaixo:
-
-👉 [Baixar APK - Google Drive](https://drive.google.com/drive/folders/1Ung8nOgzkHltKW-BUD2BMYmF7P12n7KZ?usp=sharing)
-
----
-
 ## 📎 Licença
 
 MIT License — uso livre para fins educacionais e comerciais.
