@@ -14,6 +14,7 @@ export function useHome() {
   const [search, setSearch] = useState("");
   const { clearSession } = useSession();
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoadingCard, setIsLoadingCard] = useState(true);
 
   const debouncedSearch = useDebounce(search, 300);
 
@@ -23,6 +24,8 @@ export function useHome() {
       setPackages(allPackages || []);
     } catch (err) {
       console.error("Erro ao carregar pacotes:", err);
+    }finally{
+      setIsLoadingCard(false)
     }
   }, [getAllPackage]);
 
@@ -69,6 +72,7 @@ navigate(ROUTES_PRIVATE.SCANNER)
     loadPackages,
     onRefresh,
     isOpenScan,
-    handleSignOut
+    handleSignOut,
+    isLoadingCard
   };
 }

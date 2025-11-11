@@ -1,5 +1,6 @@
 import { PackageCard } from "@/components/packageCard";
 import { Search } from "@/components/Search";
+import { PackageCardSkeletonList } from "@/components/Skeletons/SKTCardHome/PackageCardSkeletonList";
 import { PackageTypes } from "@/types/package";
 import { PrivateNavigation, ROUTES_PRIVATE } from "@/utils/routers";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -27,6 +28,7 @@ export function Home() {
     setSearch,
     filteredPackages,
     refreshing,
+    isLoadingCard,
     onRefresh,
     handleSignOut
   } = useHome();
@@ -76,7 +78,11 @@ export function Home() {
       </View>
 
       <View style={s.listContainer}>
-        <FlatList
+        {
+          isLoadingCard ?
+          <PackageCardSkeletonList/>
+          :
+             <FlatList
           data={filteredPackages || []}
           keyExtractor={(item) => item?.id.toString()}
           renderItem={renderItem}
@@ -89,6 +95,8 @@ export function Home() {
             <Text style={s.emptyText}>Nenhum pacote encontrado</Text>
           }
         />
+        }
+     
       </View>
     </View>
   );
