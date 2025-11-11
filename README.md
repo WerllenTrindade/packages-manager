@@ -146,6 +146,18 @@ it("retorna false quando ocorre erro", async () => {
 
 ---
 
+## 📱 Instalando o APK no Android
+
+1. Baixe o APK pelo link abaixo.  
+2. Habilite a instalação de apps de fontes desconhecidas no seu dispositivo.  
+3. Abra o arquivo APK baixado e siga os passos de instalação.
+
+👉 [Baixar APK - Google Drive](https://drive.google.com/drive/folders/1Ung8nOgzkHltKW-BUD2BMYmF7P12n7KZ?usp=sharing)
+
+> O repositório privado está compartilhado com a colaboradora Mayran.
+
+---
+
 ## 🧑‍💻 Autor
 
 **Werllen — Desenvolvedor Mobile Pleno**  
