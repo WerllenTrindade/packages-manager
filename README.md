@@ -150,7 +150,9 @@ it("retorna false quando ocorre erro", async () => {
 
 **Werllen — Desenvolvedor Mobile Pleno**  
 Projetos: Smartfood, SmartPDV, Força de Venda, Ótima Gestão  
-Stack: React Native, TypeScript, Expo, SQLite, Jest, CI/CD  
+Stack: React Native, TypeScript, Expo, SQLite, Jest, CI/CD 
+
+---
 
 ## 📱 Download do APK
 
