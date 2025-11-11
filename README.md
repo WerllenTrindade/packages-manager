@@ -149,8 +149,6 @@ it("retorna false quando ocorre erro", async () => {
 ## 🧑‍💻 Autor
 
 **Werllen — Desenvolvedor Mobile Pleno**  
-Projetos: Smartfood, SmartPDV, Força de Venda, Ótima Gestão  
-Stack: React Native, TypeScript, Expo, SQLite, Jest, CI/CD 
 
 ---
 
